@@ -350,6 +350,12 @@ def create_model(data, dt=1, timesteps=None, objective='cost',
         m.pro_tuples,
         rule=res_process_capacity_rule,
         doc='process.cap-lo <= total process capacity <= process.cap-up')
+        
+    # Availability factor        
+#    m.res_process_availability = pyomo.Constraint(m.tm,
+#        m.pro_output_tuples,
+#        rule=res_process_availability_rule,
+#        doc='maximum process output = limited by given full load hours')             
 
     m.res_area = pyomo.Constraint(
         m.sit_tuples,
@@ -593,6 +599,19 @@ def def_process_input_rule(m, tm, stf, sit, pro, com):
 def def_process_output_rule(m, tm, stf, sit, pro, com):
     return (m.e_pro_out[tm, stf, sit, pro, com] ==
             m.tau_pro[tm, stf, sit, pro] * m.r_out_dict[(stf, pro, com)])
+
+
+#availability rule= max energy output in a year is limited to predefined flh (=availability) + cap_up
+#def res_process_availability_rule(m,  tm, stf, sit, pro, com):
+#
+#    energy_output_sum=0
+#    if m.process_dict['availability'][stf, sit, pro] < 8760:
+#        for tm in m.tm:  
+#
+#            energy_output_sum+=m.e_pro_out[ tm, stf, sit, pro, com] 
+#        return (energy_output_sum <= m.process_dict['availability'][stf, sit, pro] * m.cap_pro[stf, sit, pro])
+#    else:
+#        return pyomo.Constraint.Skip
 
 
 # process input (for supim commodity) = process capacity * timeseries

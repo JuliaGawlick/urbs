@@ -253,6 +253,12 @@ def create_model(data, dt=1, timesteps=None, objective='cost',
         m.pro_tuples,
         within=pyomo.NonNegativeReals,
         doc='New process capacity (MW)')
+        
+    #set of processes that are allowed to be decommissioned    
+    m.cap_decommissioned = pyomo.Var(
+        m.pro_tuples,
+        within=pyomo.NonNegativeReals,
+        doc='Decommissioned process capacity (MW)')    
 
     # process capacity as expression object
     # (variable if expansion is possible, else static)
@@ -569,16 +575,19 @@ def def_process_capacity_rule(m, stf, sit, pro):
                 cap_pro = m.process_dict['inst-cap'][(stf, sit, pro)]
             else:
                 cap_pro = \
-                    (sum(m.cap_pro_new[stf_built, sit, pro]
-                         for stf_built in m.stf
-                         if (sit, pro, stf_built, stf)
-                         in m.operational_pro_tuples) +
-                     m.process_dict['inst-cap'][(min(m.stf), sit, pro)])
+                    (sum
+                     (m.cap_pro_new[stf_built, sit, pro]
+                      for stf_built in m.stf if (sit, pro, stf_built, stf) in m.operational_pro_tuples) 
+                     + m.process_dict['inst-cap'][(min(m.stf), sit, pro)] 
+                     ) \
+                    - sum(m.cap_decommissioned[stf_dec, sit, pro] for stf_dec in m.stf if stf_dec <= stf if stf_dec > min(m.stf) if (stf_dec, sit, pro) in m.pro_decom_cap_dict) 
+
         else:
             cap_pro = sum(
                 m.cap_pro_new[stf_built, sit, pro]
                 for stf_built in m.stf
                 if (sit, pro, stf_built, stf) in m.operational_pro_tuples)
+                - sum(m.cap_decommissioned[stf_dec, sit, pro] for stf_dec in m.stf if stf_dec <= stf if stf_dec > min(m.stf) if (stf_dec, sit, pro) in m.pro_decom_cap_dict)
     else:
         if (sit, pro, stf) in m.pro_const_cap_dict:
             cap_pro = m.process_dict['inst-cap'][(stf, sit, pro)]

@@ -581,7 +581,7 @@ def def_process_capacity_rule(m, stf, sit, pro):
                 m.cap_pro_new[stf_built, sit, pro]
                 for stf_built in m.stf
                 if (sit, pro, stf_built, stf) in m.operational_pro_tuples)
-                - sum(m.cap_decommissioned[stf_dec, sit, pro] for stf_dec in m.stf if stf_dec <= stf if stf_dec > min(m.stf) if (stf_dec, sit, pro) in m.pro_decom_cap_dict)
+            - sum(m.cap_decommissioned[stf_dec, sit, pro] for stf_dec in m.stf if stf_dec <= stf if stf_dec > min(m.stf) if (stf_dec, sit, pro) in m.pro_decom_cap_dict)
     else:
         if (sit, pro, stf) in m.pro_const_cap_dict:
             cap_pro = m.process_dict['inst-cap'][(stf, sit, pro)]

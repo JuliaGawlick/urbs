@@ -193,11 +193,11 @@ def run_scenario_myopic(input_files, Solver, timesteps, scenario, result_dir, dt
         assert str(result.solver.termination_condition) == 'optimal'
 
         # save problem solution (and input data) to HDF5 file
-        save(prob, os.path.join(result_dir, '{}.h5'.format(sce)))
-        # in the first run, now we have the info about which data to update.
+        save(prob, os.path.join(result_dir, '{}'+str(data['global_prop'].index.levels[0][0])+'.h5').format(sce))
+
         report(
             prob,
-            os.path.join(result_dir, '{}'+str(i)+'.xlsx').format(sce),
+            os.path.join(result_dir, '{}'+str(data['global_prop'].index.levels[0][0])+'.xlsx').format(sce),
             report_tuples=report_tuples,
             report_sites_name=report_sites_name)
 
@@ -215,9 +215,9 @@ def myopic_update(data,prob):
         indexstf = indextuple[0]
         indexsit = indextuple[1]
         indexprocess = indextuple[2]
-        import pdb;pdb.set_trace()
+        #import pdb;pdb.set_trace()
         pro.loc[(indextuple),'inst-cap'] = prob._result["cap_pro"].loc[(previous_stf,indexsit,indexprocess)].iloc[0]
-        pro.loc[(indextuple),'lifetime'] = indexstf - previous_stf
+        #pro.loc[(indextuple),'lifetime'] = indexstf - previous_stf
 
     # set inst cap for storages to results from previous stf
     sto = data['storage']

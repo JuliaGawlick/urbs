@@ -39,6 +39,10 @@ def identify_mode(data):
     # if number of support timeframes > 1
     if len(data['global_prop'].index.levels[0]) > 1:
         mode['int'] = True
+    stf_is=data['global_prop'].index.levels[0][0] 
+    if data['global_prop'].loc[stf_is,"mode"].value == "myopic":
+        mode['int'] = False
+
     if not data['transmission'].empty:
         mode['tra'] = True
         mode['exp']['tra'] = True

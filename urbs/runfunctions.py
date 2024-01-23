@@ -215,8 +215,11 @@ def myopic_update(data,prob):
         indexstf = indextuple[0]
         indexsit = indextuple[1]
         indexprocess = indextuple[2]
-        #import pdb;pdb.set_trace()
-        pro.loc[(indextuple),'inst-cap'] = prob._result["cap_pro"].loc[(previous_stf,indexsit,indexprocess)].iloc[0]
+
+        if prob._result["cap_pro"].index.isin([(previous_stf[0], indexsit, indexprocess)]).any() == True:
+            pro.loc[(indextuple),'inst-cap'] = prob._result["cap_pro"].loc[(previous_stf,indexsit,indexprocess)].iloc[0]
+        else:
+            pass
         #pro.loc[(indextuple),'lifetime'] = indexstf - previous_stf
 
     # set inst cap for storages to results from previous stf
@@ -226,9 +229,13 @@ def myopic_update(data,prob):
     for indextuple in indexlist:
         indexsit = indextuple[1]
         indexstorage = indextuple[2]
+        indexcommodity=indextuple[3]
 
-        sto.loc[(indextuple),'inst-cap-c'] = prob._result["cap_sto_c"].loc[(previous_stf,indexsit,indexstorage)].iloc[0]
-        sto.loc[(indextuple), 'inst-cap-p'] = prob._result["cap_sto_p"].loc[(previous_stf, indexsit, indexstorage)].iloc[0]
+        if prob._result["cap_sto_c"].index.isin([(previous_stf[0], indexsit, indexstorage,indexcommodity)]).any() == True:
+            sto.loc[(indextuple),'inst-cap-c'] = prob._result["cap_sto_c"].loc[(previous_stf,indexsit,indexstorage,indexcommodity)].iloc[0]
+            sto.loc[(indextuple), 'inst-cap-p'] = prob._result["cap_sto_p"].loc[(previous_stf, indexsit, indexstorage,indexcommodity)].iloc[0]
+        else:
+            pass
 
 
     # set inst cap for transmission to results from previous stf
@@ -240,9 +247,12 @@ def myopic_update(data,prob):
         indexsitin = indextuple[1]
         indexsitout = indextuple[2]
         indextransmission = indextuple[3]
+        indexcommodity = indextuple[4]
 
-        tra.loc[(indextuple),'inst-cap'] = prob._result["cap_tra"].loc[(previous_stf,indexsitin,indexsitout,indextransmission)].iloc[0]
-
+        if prob._result["cap_tra"].index.isin([(previous_stf[0], indexsitin,indexsitout, indextransmission,indexcommodity)]).any() == True:
+            tra.loc[(indextuple),'inst-cap'] = prob._result["cap_tra"].loc[(previous_stf,indexsitin,indexsitout,indextransmission,indexcommodity)].iloc[0]
+        else:
+            pass
 
 
     return data

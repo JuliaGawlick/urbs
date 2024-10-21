@@ -30,13 +30,28 @@ objective = 'cost'  # set either 'cost' or 'CO2' as objective
 solver = 'gurobi'
 
 # simulation timesteps
-(offset, length) = (0, 2)  # time step selection
+(offset, length) = (0, 24)  # time step selection
 timesteps = range(offset, offset+length+1)
 dt = 1  # length of each time step (unit: hours)
 
 # detailed reporting commodity/sites
 report_tuples = [
-  
+    (2019, 'North', 'Elec'),
+    (2019, 'Mid', 'Elec'),
+    (2019, 'South', 'Elec'),
+    (2019, ['North', 'Mid', 'South'], 'Elec'),
+    (2024, 'North', 'Elec'),
+    (2024, 'Mid', 'Elec'),
+    (2024, 'South', 'Elec'),
+    (2024, ['North', 'Mid', 'South'], 'Elec'),
+    (2029, 'North', 'Elec'),
+    (2029, 'Mid', 'Elec'),
+    (2029, 'South', 'Elec'),
+    (2029, ['North', 'Mid', 'South'], 'Elec'),
+    (2034, 'North', 'Elec'),
+    (2034, 'Mid', 'Elec'),
+    (2034, 'South', 'Elec'),
+    (2034, ['North', 'Mid', 'South'], 'Elec'),
     ]
 
 # optional: define names for sites in report_tuples
@@ -44,7 +59,22 @@ report_sites_name = {}
 
 # plotting commodities/sites
 plot_tuples = [
-   
+    (2019, 'North', 'Elec'),
+    (2019, 'Mid', 'Elec'),
+    (2019, 'South', 'Elec'),
+    (2019, ['North', 'Mid', 'South'], 'Elec'),
+    (2024, 'North', 'Elec'),
+    (2024, 'Mid', 'Elec'),
+    (2024, 'South', 'Elec'),
+    (2024, ['North', 'Mid', 'South'], 'Elec'),
+    (2029, 'North', 'Elec'),
+    (2029, 'Mid', 'Elec'),
+    (2029, 'South', 'Elec'),
+    (2029, ['North', 'Mid', 'South'], 'Elec'),
+    (2034, 'North', 'Elec'),
+    (2034, 'Mid', 'Elec'),
+    (2034, 'South', 'Elec'),
+    (2034, ['North', 'Mid', 'South'], 'Elec'),
     ]
 
 # optional: define names for sites in plot_tuples

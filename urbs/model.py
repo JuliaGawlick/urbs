@@ -356,6 +356,12 @@ def create_model(data, dt=1, timesteps=None, objective='cost',
         m.pro_tuples,
         rule=res_process_capacity_rule,
         doc='process.cap-lo <= total process capacity <= process.cap-up')
+        
+    # Availability factor        
+#    m.res_process_availability = pyomo.Constraint(m.tm,
+#        m.pro_output_tuples,
+#        rule=res_process_availability_rule,
+#        doc='maximum process output = limited by given full load hours')             
 
     m.res_area = pyomo.Constraint(
         m.sit_tuples,
@@ -570,18 +576,22 @@ def def_process_capacity_rule(m, stf, sit, pro):
             else:
                 cap_pro = \
                     (sum
+
                      (m.cap_pro_new[stf_built, sit, pro]
                       for stf_built in m.stf if (sit, pro, stf_built, stf) in m.operational_pro_tuples) 
                      + m.process_dict['inst-cap'][(min(m.stf), sit, pro)] 
                      ) \
                     - sum(m.cap_decommissioned[stf_dec, sit, pro] for stf_dec in m.stf if stf_dec <= stf if stf_dec > min(m.stf) if (stf_dec, sit, pro) in m.pro_decom_cap_dict) 
 
+
         else:
             cap_pro = sum(
                 m.cap_pro_new[stf_built, sit, pro]
                 for stf_built in m.stf
+
                 if (sit, pro, stf_built, stf) in m.operational_pro_tuples
             - sum(m.cap_decommissioned[stf_dec, sit, pro] for stf_dec in m.stf if stf_dec <= stf if stf_dec > min(m.stf) if (stf_dec, sit, pro) in m.pro_decom_cap_dict))
+
     else:
         if (sit, pro, stf) in m.pro_const_cap_dict:
             cap_pro = m.process_dict['inst-cap'][(stf, sit, pro)] - sum(m.cap_decommissioned[stf_dec, sit, pro] for stf_dec in m.stf if stf_dec <= stf if (stf_dec, sit, pro) in m.pro_decom_cap_dict)
@@ -603,6 +613,19 @@ def def_process_input_rule(m, tm, stf, sit, pro, com):
 def def_process_output_rule(m, tm, stf, sit, pro, com):
     return (m.e_pro_out[tm, stf, sit, pro, com] ==
             m.tau_pro[tm, stf, sit, pro] * m.r_out_dict[(stf, pro, com)])
+
+
+#availability rule= max energy output in a year is limited to predefined flh (=availability) + cap_up
+#def res_process_availability_rule(m,  tm, stf, sit, pro, com):
+#
+#    energy_output_sum=0
+#    if m.process_dict['availability'][stf, sit, pro] < 8760:
+#        for tm in m.tm:  
+#
+#            energy_output_sum+=m.e_pro_out[ tm, stf, sit, pro, com] 
+#        return (energy_output_sum <= m.process_dict['availability'][stf, sit, pro] * m.cap_pro[stf, sit, pro])
+#    else:
+#        return pyomo.Constraint.Skip
 
 
 # process input (for supim commodity) = process capacity * timeseries

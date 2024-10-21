@@ -3,11 +3,11 @@ import shutil
 import urbs
 from datetime import date
 
-input_files = 'Intertemporal_example'  # for single year file name, for intertemporal folder name
+input_files = 'myopictest'  # for single year file name, for intertemporal folder name
 input_dir = 'Input'
 input_path = os.path.join(input_dir, input_files)
 
-result_name = 'Intertemp'
+result_name = 'myopictest'
 result_dir = urbs.prepare_result_directory(result_name)  # name + time stamp
 
 mode="myopic" # choose from single year, intertemporal or myopic

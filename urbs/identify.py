@@ -28,6 +28,7 @@ def identify_mode(data):
         'dsm': False,                   # demand site management
         'bsp': False,                   # buy sell price
         'tve': False,                   # time variable efficiency
+        'avail':False,                  #availability factor for processes
         'dpf': False,                   # dc power flow
         'exp': {                        # expansion
                 'pro': True,
@@ -59,6 +60,8 @@ def identify_mode(data):
     if 'reactance' in data['transmission'].keys():
         if any(data['transmission']['reactance'] > 0):
             mode['dpf'] = True
+    if not data["process"]["availability"].empty:
+        mode['avail'] = True        
 
     return mode
 
